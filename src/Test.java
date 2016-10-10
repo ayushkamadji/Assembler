@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
  */
 public class Test {
     public static void main(String[] args) {
-        Matcher matcher = Pattern.compile("\\S(?=.*\\/\\/)").matcher("   D + 1 = M   // Com");
+        Matcher matcher = Pattern.compile("(?<=@)\\S+").matcher("@at");
         String pattern = matcher.pattern().toString();
         System.out.println(pattern.toString());
         while (matcher.find()) {
