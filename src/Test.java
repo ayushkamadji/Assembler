@@ -6,8 +6,11 @@ import java.util.regex.Pattern;
  */
 public class Test {
     public static void main(String[] args) {
-        Matcher matcher = Pattern.compile("\\S+").matcher("This is a match");
+        Matcher matcher = Pattern.compile("\\S(?=.*\\/\\/)").matcher("   D + 1 = M   // Com");
         String pattern = matcher.pattern().toString();
-        System.out.println(matcher.group());
+        System.out.println(pattern.toString());
+        while (matcher.find()) {
+            System.out.print(matcher.group());
+        }
     }
 }

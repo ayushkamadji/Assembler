@@ -19,6 +19,7 @@ public class Parser {
     private final Pattern commentPattern = Pattern.compile("\\S+\\/\\/");
     private String currentLine;
     private String nextLine;
+    private String currentCommand;
     private boolean EOF; // End of file indicator
     private boolean EOC; // End of code/commands indicator
 
@@ -75,10 +76,33 @@ public class Parser {
             }
 
             // Does the current line have commands or just white space/comments?
-            private boolean hasCommands() {
-                Matcher matcher = Pattern.compile("\\S").matcher(currentLine);
+            private boolean hasCommands(String s) {
+                Matcher matcherCM = Pattern.compile("^\\s*\\/\\/").matcher(s);
+                Matcher matcherWS = Pattern.compile("\\S").matcher(s);
+                return (matcherWS.find()&&(!matcherCM.find()));
+            }
+
+            private boolean withComments(String s){
+                if(hasCommands(s)){
+                    Matcher matcherCM = Pattern.compile("\\/\\/").matcher(s);
+                    return matcherCM.find();
+                }
                 return false;
             }
 
-            // Parse current line
+            // Convert line to command
+            private String lineToCommand(String line){
+                if (hasCommands(line)) {
+                    String out = "";
+                    Matcher matcherCOM;
+                    if (withComments(line)) {
+                        matcherCOM = Pattern.compile("\\S(?=.*\\/\\/)").matcher(line);
+                    } else {
+                        matcherCOM = Pattern.compile("\\S").matcher(line);
+                    }
+                    while(matcherCOM.find()) out += matcherCOM.group();
+                    return out;
+                }
+                return null;
+            }
 }
