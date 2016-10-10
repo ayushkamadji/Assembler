@@ -1,5 +1,6 @@
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import com.sun.org.apache.xml.internal.security.keys.keyresolver.implementations.PrivateKeyResolver;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.*;
 import java.util.regex.Matcher;
@@ -15,8 +16,11 @@ import java.util.regex.Pattern;
 public class Parser {
     // Fields
     private BufferedReader reader;
-    private final Pattern commentPattern = Pattern.compile(".*\\/\\/");
+    private final Pattern commentPattern = Pattern.compile("\\S+\\/\\/");
     private String currentLine;
+    private String nextLine;
+    private boolean EOF; // End of file indicator
+    private boolean EOC; // End of code/commands indicator
 
     // Constructor
         // Construct by buffered reader
@@ -45,15 +49,36 @@ public class Parser {
     // Methods
         // Public
         public boolean hasNextCommand(){
-        return true;
+            return EOC;
         }
 
-        // Get current line
-        private void readCurrentLine(){
-            try {
-                currentLine = reader.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
+        // Private
+            // Initialize lines
+            private void initLines(){
+                try {
+                    nextLine = null;
+                    currentLine = reader.readLine();
+                    if(currentLine != null) {
+                        nextLine = reader.readLine();
+                        EOF = false;
+                    } else {
+                        EOF = true;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
+
+            // Is there a next line available?
+            private boolean hasNextLine() {
+                return(nextLine!=null);
+            }
+
+            // Does the current line have commands or just white space/comments?
+            private boolean hasCommands() {
+                Matcher matcher = Pattern.compile("\\S").matcher(currentLine);
+                return false;
+            }
+
+            // Parse current line
 }
